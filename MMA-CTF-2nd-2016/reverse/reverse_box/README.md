@@ -1,10 +1,10 @@
-#reverse box
+# reverse box
 
-##Problem
+## Problem
 ![picture](picture/problem.png)
 這題給了一個ELF執行檔，根據題目(上圖)可以知道，在執行時的後面加上flag，它會噴出一串奇怪的字串。   
 
-##Solution
+## Solution
 
 將檔案拖進IDA PRO分析:   
 ![picture](picture/ida_main.png)
