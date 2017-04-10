@@ -1,8 +1,8 @@
-#warm up [50]
+# warm up [50]
 
-##Problem
+## Problem
 
-##Solution
+## Solution
 
 將檔案丟進IDA:   
 ![picture](picture/main.PNG)
