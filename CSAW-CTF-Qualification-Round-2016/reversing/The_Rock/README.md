@@ -1,8 +1,8 @@
-#The Rock [100]
+# The Rock [100]
 
-##Problem
+## Problem
 
-##Soultion
+## Soultion
 
 將程式丟進IDA:   
 ![picture](picture/main.PNG)   
