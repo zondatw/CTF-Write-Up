@@ -41,24 +41,24 @@ Temporary breakpoint 1, 0x0040150b in main ()
 ```
 
 ### step
-step (s): step into，當執行到function時會跟進去
+step (s): step into，當執行到function時會跟進去  
 ![picture](picture/gdb/before_s.JPG)  
 ![picture](picture/gdb/type_s.JPG)  
-step instrution (si): 同上，但是每次只執行一行指令
+step instrution (si): 同上，但是每次只執行一行指令  
 ![picture](picture/gdb/before_si.JPG)  
-![picture](picture/gdb/type_si.JPG) 
-next (n): step over，當執行到function時不會跟進去
+![picture](picture/gdb/type_si.JPG)  
+next (n): step over，當執行到function時不會跟進去  
 ![picture](picture/gdb/before_n.JPG)  
-![picture](picture/gdb/type_n.JPG) 
-next instrution (ni): 同上，但是每次只執行一行指令  
+![picture](picture/gdb/type_n.JPG)  
+next instrution (ni): 同上，但是每次只執行一行指令   
 ![picture](picture/gdb/before_ni.JPG)  
-![picture](picture/gdb/type_ni.JPG) 
+![picture](picture/gdb/type_ni.JPG)  
 cntinue (c): continue  
 ![picture](picture/gdb/before_c.JPG)  
-![picture](picture/gdb/type_c.JPG) 
-finish (fin): 執行到當前的function返回  
+![picture](picture/gdb/type_c.JPG)  
+finish (fin): 執行到當前的function返回   
 ![picture](picture/gdb/before_fin.JPG)  
-![picture](picture/gdb/type_fin.JPG) 
+![picture](picture/gdb/type_fin.JPG)  
 
 
 ### break
@@ -158,17 +158,17 @@ $5 = 100
 ```
 
 ### record
-record: 從執行命令後開始紀錄
+record: 從執行命令後開始紀錄  
 rs, rsi, rn, rni, rs, rc: 同原功能，只是變成返回
 執行record  
 ![picture](picture/gdb/type_record.JPG)  
 執行一些指令後  
 ![picture](picture/gdb/use_some_instructions.JPG)  
-使用rs
+使用rs  
 ![picture](picture/gdb/type_rs.JPG)  
-使用rn前的狀態
+使用rn前的狀態  
 ![picture](picture/gdb/before_rn.JPG)  
-使用rn後
+使用rn後  
 ![picture](picture/gdb/type_rn.JPG)  
 
 ### attach
