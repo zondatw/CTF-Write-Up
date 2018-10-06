@@ -1,7 +1,7 @@
 # Magic 1
 
 ## Program
-![program](picture/program.jpg)  
+<img src="picture/program.jpg" width="480">  
 
 ## Solution
 分析後就是，他總共會執行666次input的判斷，而總共有7種判斷，每次執行完都會去修改自己，讓每次的7種判斷順序都不一樣。  

@@ -1,7 +1,7 @@
 # Ultimate Minesweeper 1
 
 ## Program
-![program](picture/program.jpg)  
+<img src="picture/program.jpg" width="480">  
 
 ## Solution
 利用ILSPY分析

@@ -1,7 +1,7 @@
 # FLEGGO 1
 
 ## Program
-![program](picture/program.jpg)  
+<img src="picture/program.jpg" width="480">  
 
 ## Solution
 解壓縮後會有很多程式，會要求你輸入密碼。  

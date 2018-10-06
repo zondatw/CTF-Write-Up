@@ -1,7 +1,7 @@
 # Web 2.0 1
 
 ## Program
-![program](picture/program.jpg)  
+<img src="picture/program.jpg" width="480">  
 
 ## Solution
 剛開始傻傻的一個一個人工decomplier，後來受不了才找到JEB有出wasm的decomplier，就反來分析。  
