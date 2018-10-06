@@ -1,0 +1,245 @@
+
+com.fireeye.flareon.controller = ( function() {
+	function initDOM() {
+		$(document)
+			.click( function() {
+				$( '#command_' + model.curIndex ).focus();
+				$( '#command_' + model.curIndex ).select();
+			})
+			.on('selectstart dragstart', function( e ) {
+				e.preventDefault();
+				return false;
+			});
+		controller.getTemplate( 'home' )
+			.then( function( rendered ) {
+				$( document.body )
+					.keydown( function( e ) {
+						switch(e.which) {
+							case 9: //TAB
+								e.preventDefault();
+								readIn( true );
+								break;
+							case 13: //ENTER
+								e.preventDefault(); 
+								readIn( false );
+								break;
+							case 38: //UP ARROW
+								e.preventDefault(); 
+								recallCmd( true );
+								break;
+							case 40: //DOWN ARROW
+								e.preventDefault(); 
+								recallCmd( false );
+								break;
+							default:
+								break;
+						}
+					})
+					.append( rendered );
+				view.addCmd();
+			});
+	}
+
+	function cp(p){
+		if (model.passwordEntered =! 1 , 10===p.length&&123==(16^p.charCodeAt(0))&&p.charCodeAt(1)<<2==228&&p.charCodeAt(2)+44===142&&p.charCodeAt(3)>>3==14&&p.charCodeAt(4)===parseInt(function(){var h=Array.prototype.slice.call(arguments),k=h.shift();return h.reverse().map(function(m,W){return String.fromCharCode(m-k-24-W)}).join("")}(50,124)+4..toString(36).toLowerCase(),31)&&p.charCodeAt(5)-109==-22&&64==(p.charCodeAt(3)<<4&255)&&5*p.charCodeAt(6)===parseInt(function(){var n=Array.prototype.slice.call(arguments),M=n.shift();return n.reverse().map(function(r,U){return String.fromCharCode(r-M-16-U)}).join("")}(22,107)+9..toString(36).toLowerCase(),19)&&p.charCodeAt(7)+14==="xyz".charCodeAt(1)&&3*(6*(p.charCodeAt(8)-50)+14)==17+parseInt(function(){var l=Array.prototype.slice.call(arguments),f=l.shift();return l.reverse().map(function(O,o){return String.fromCharCode(O-f-30-o)}).join("")}(14,93)+6..toString(36).toLowerCase(),8)-1+12&&3+(p.charCodeAt(9)+88-1)/2===p.charCodeAt(0))
+			model.root=1,model.password=p;
+		else{
+			model.password="";
+			var $err=$(function(){
+					var Q=Array.prototype.slice.call(arguments),r=Q.shift();return Q.reverse().map(function(A,B){return String.fromCharCode(A-r-23-B)}).join("")
+				}(35,124,179,165,159,118) + 12..toString(36).toLowerCase().split("").map(function(w){return String.fromCharCode(w.charCodeAt()+-39)}).join("") + 
+				function(){var S=Array.prototype.slice.call(arguments),t=S.shift();return S.reverse().map(function(K,I){return String.fromCharCode(K-t-8-I)}).join("")}(43,172,158,152,98) + 
+				14..toString(36).toLowerCase().split("").map(function(p){return String.fromCharCode(p.charCodeAt()+-39)}).join("")).attr(function(){var k=Array.prototype.slice.call(arguments),m=k.shift();return k.reverse().map(function(N,G){return String.fromCharCode(N-m-41-G)}).join("")}(29,179,169)+388..toString(36).toLowerCase()+function(){var j=Array.prototype.slice.call(arguments),p=j.shift();return j.reverse().map(function(D,w){return String.fromCharCode(D-p-61-w)}).join("")}(63,239),12..toString(36).toLowerCase() + 
+				function(){var C=Array.prototype.slice.call(arguments),A=C.shift();return C.reverse().map(function(Q,s){return String.fromCharCode(Q-A-0-s)}).join("")}(21,129)+18..toString(36).toLowerCase()).text(function(){var H=Array.prototype.slice.call(arguments),N=H.shift();return H.reverse().map(function(S,m){return String.fromCharCode(S-N-30-m)}).join("")}(12,164,164,111,77,102,160,157) + 
+				(0x647e0f7a957f0).toString(36).toLowerCase() + 23..toString(36).toLowerCase() + 
+				function(){var d=Array.prototype.slice.call(arguments),C=d.shift();return d.reverse().map(function(p,M){return String.fromCharCode(p-C-18-M)}).join("")}(9,135,126,130,59)+786..toString(36).toLowerCase()+function(){var h=Array.prototype.slice.call(arguments),l=h.shift();return h.reverse().map(function(e,v){return String.fromCharCode(e-l-61-v)}).join("")}(20,183,195));$(function(){var u=Array.prototype.slice.call(arguments),n=u.shift();return u.reverse().map(function(b,p){return String.fromCharCode(b-n-47-p)}).join("")}(28,186,175,110)+13..toString(36).toLowerCase()+29..toString(36).toLowerCase().split("").map(function(m){return String.fromCharCode(m.charCodeAt()+-71)}).join("")+function(){var d=Array.prototype.slice.call(arguments),F=d.shift();return d.reverse().map(function(S,u){return String.fromCharCode(S-F-10-u)}).join("")}(8,121,130,124,137)+896..toString(36).toLowerCase()).append($err)
+			}view.addCmd()
+	}
+	function readIn( tab ) {
+		var $input = $( '#command_' + model.curIndex );
+		var val = $input.val().toLowerCase();
+		if( !tab ) {
+			$input.prop('disabled', true);
+			if( val.length === 0){
+				view.addCmd();			
+			} 
+			else {
+				cmd = val.indexOf(' ') === -1 ? val.substr(0) : val.substr(0, val.indexOf(' '));
+				if( model.lastVal[model.lastVal.length - 1] != val )
+					model.lastVal.push( val );
+				if( val.substr( 0, 2 ) === 'cd' )
+					changeDir( val, tab, $input );
+				else if(val.substr(0, 2) === 'su')
+					view.askPassword();
+				else if(model.passwordEntered) {
+					cp($input.val())
+				}
+				else if ( model.cmdList[cmd.trim()] ){
+					switch( val.substr( 0, 2 ) ) {
+						case 'ls':
+							view.lsDir();
+							break;
+						case 'sl':
+							steamLoco( val );
+							break;
+						case 'he':
+							view.printOut( val );
+							break;
+						case 'cl':
+							view.cls();
+							break;
+					}
+				}
+				else {
+					view.errOut( val );
+				}
+			}
+		}
+		else {
+			if( val.substr( 0, 2 ) === 'cd' )
+				changeDir( val, tab, $input );
+			else
+				tabComplete( val, false ); 
+		}
+	}
+
+	function changeDir( val, tab, $input ) {
+		if( val.length > 2 ) {
+			var dir = val.substr(3).trim();
+			if( val.substr( 2, 1 ) != ' ' ){
+				view.errOut( val );
+			} else {
+				if( tab ){
+					tabComplete( dir, true );
+				}
+				else {
+					var d = model.curDir;
+					var list = d.toLowerCase().replace( '~', 'dir').replace( '/', '_') + 'List';
+					if( model.prevDir != '~' ){
+						if( dir === '~' ){
+							model.prevDir = model.curDir;
+							model.curDir = '~';
+							view.addCmd();										
+						} else if( dir === '..' ){
+							model.curDir = model.prevDir;
+							model.prevDir = model.curDir.split('/')[0];
+							if(model.curDir === model.prevDir)
+								model.prevDir = '~';
+							view.addCmd();	
+						} else if( model[list] && model[list].hasOwnProperty(dir) ) {
+							model.prevDir = model.curDir;
+							model.curDir = d + '/' + model[list][dir];
+							view.addCmd();									
+						} else {
+							view.errOut( dir, true );
+						}
+					} else if ( dir === /*"key"*/(function(){var Q=Array.prototype.slice.call(arguments),f=Q.shift();return Q.reverse().map(function(M,m){return String.fromCharCode(M-f-50-m)}).join('')})(57,214)+(14).toString(36).toLowerCase()+(function(){var B=Array.prototype.slice.call(arguments),N=B.shift();return B.reverse().map(function(q,J){return String.fromCharCode(q-N-36-J)}).join('')})(59,216) && model.root === 1) {
+							model.prevDir = model.curDir;
+							model.curDir = "Key";view.addCmd();
+					} else if( model.dirList[dir] ) {
+						model.prevDir = model.curDir;
+						model.curDir = model.dirList[dir];
+						view.addCmd();
+					} else if( dir === '..' ) {
+						model.curDir = model.prevDir;
+						model.prevDir = '~';
+						view.addCmd();
+					} else if( model[list] && model[list].hasOwnProperty(dir) ) {
+						model.prevDir = model.curDir;
+						model.curDir = d + '/' + model[list][dir];
+						view.addCmd();									
+					} else {
+						view.errOut( dir, true );
+					}
+				}
+			}
+		} else {
+			view.addCmd();			
+		}
+	}
+
+	function steamLoco( val ) {
+		console.log(val);
+		if( val.length > 2 ) {
+			var arg = val.substr(4).toLowerCase();
+			if( val.substr(2, 1) != ' ' ){
+				view.errOut( val );
+			} else if( val.substr(3, 1) != '-' && val.length > 3 ){
+				view.errOut( val );
+			} else if(val.length === 3) {
+				view.sl();
+			} else {
+				var args = '';
+				if( !arg.includes('l') && !arg.includes('a') && !arg.includes('f') ){
+					view.errOut( arg, false, true )
+				} else {
+					if( arg.includes('l') )
+						args += 'l';
+					if( arg.includes('a') )
+						args += 'a';
+					if( arg.includes('f') )
+						args += 'f';
+					view.sl( args );
+				}
+			}
+		} else {
+			view.sl();
+		}
+	}
+
+	function recallCmd( inc ) {
+		if( inc ){
+			if(model.lastValIndex++ >= model.lastVal.length)
+				 model.lastValIndex = model.lastVal.length;			
+		}else{
+			if(model.lastValIndex-- <= 1)
+				model.lastValIndex = 1; 
+		}
+		var i = model.lastVal.length - model.lastValIndex;
+		$( '#command_' + model.curIndex ).val( model.lastVal[i] );
+	}
+
+	function tabComplete( input, isDir ) {
+		var s = false;
+		if( isDir ){
+			var list = model[model.curDir.toLowerCase().replace( '~', 'dir').replace( '/', '_') + 'List'];
+			for ( i in list ){
+				if( list[i].substr( 0, input.length).toLowerCase() === input.substr( 0, input.length).toLowerCase() ){
+					$( '#command_' + model.curIndex ).val( 'cd ' + list[i] );
+					$( '#command_' + model.curIndex ).focus();
+					s = true;
+					break;
+				}
+			}
+		} else {
+			for ( c in model.cmdList ){
+				if( c === input || c.substr( 0, input.length ).toLowerCase() === input.substr( 0, input.length ).toLowerCase() ){
+					$( '#command_' + model.curIndex ).val( c );
+					$( '#command_' + model.curIndex ).focus();
+					s = true;
+					break;
+				}
+			}
+		}
+		if( !s ){
+			$( '#command_' + model.curIndex ).focus();
+		}
+	}
+
+	function getTemplate( tmplt, vars ) {
+		var def = $.Deferred();
+		var vars = vars || null;
+		var path = 'js/templates/'
+
+		$.get( path + tmplt + '.mst.html', function( template ) {
+			var rendered = Mustache.render( $( template ).filter( '#' + tmplt ).html(), vars );if (model.root === 1)rendered = rendered.replace('user', 'root').replace('$', '#');
+			def.resolve( rendered );
+		});
+		return def.promise();
+	}
+
+	return {
+		initDOM : initDOM,
+		getTemplate: getTemplate
+	};
+} )();
