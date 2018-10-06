@@ -1,7 +1,7 @@
 # 2018 Flare-On
 
-最終成績:
-![score](score.JPG)  
+最終成績:  
+<img src="score.JPG" width="480">  
 
 大概3年前知道FireEye每年會舉辦這個Challenge，  
 本來是去年就要參加來玩玩看，但剛好去當兵，而今年本來差點忘記有這挑戰，剛好看到有人po相關訊息才跟到，所以就利用下班時間來玩玩瞜!  
