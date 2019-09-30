@@ -8,10 +8,10 @@
 因為是第一次碰NES Game的題目，所以剛開始先用[nes-asm-tutorials](https://patater.com/nes-asm-tutorials/)學習NES game的asm，以及[Mesen](https://www.mesen.ca/docs/gettingstarted.html)來執行Nes Game，學習完後就用Mesen來Debug，先從觀察Memory的情況，分析出
 
 ```text
-牆 x: ff, 18
-牆 y: ff 16
-x: 00~17
-y: 00~15
+牆 x: 0xff, 0x18
+牆 y: 0xff, 0x16
+x: 0x00 ~ 0x17
+y: 0x00 ~ 0x15
 
 UP: 2
 LEFT: 1

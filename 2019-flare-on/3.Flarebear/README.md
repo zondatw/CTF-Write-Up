@@ -27,6 +27,7 @@ x.check()
 x.model()
 # [f = 8, p = 4, c = 2]
 ```
-然後按feed 8次 play 4次 clean 2次，就拿到flag囉!  
+
+然後按feed 8次、play 4次、clean 2次，就拿到flag囉!  
 
 ![answer](picture/answer.PNG)  

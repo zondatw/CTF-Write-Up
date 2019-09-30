@@ -18,10 +18,8 @@ argc 必須等於 3，所以要輸入2個參數，
 
 後來修改了很多次輸入後，發現它會以第2個參數每4個bytes為一組編成3個bytes  
 
-之後他會去init 一個function table  
+之後他會去init 一個function table，而在觀察call 的次數後，會發現很多function永遠不會執行，先把他們標注出來  
 ![init_function](picture/init_function.PNG)  
-
-觀察call 的次數後，會發現很多function永遠不會執行，先把他們標注出來  
 ![call_function_counter](picture/call_function_counter.PNG)  
 
 首先，第一個被call的function(0x00007FF7E07317B0)，  
