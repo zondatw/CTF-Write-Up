@@ -5,7 +5,7 @@
 
 ## Solution
 
-分析了一下程式，發現他會去比對一些規則:
+分析了一下程式，發現他會去比對一些規則:  
 ![check_key_part1](picture/check_key_part1.PNG)  
 ![check_key_part2](picture/check_key_part2.PNG)  
 

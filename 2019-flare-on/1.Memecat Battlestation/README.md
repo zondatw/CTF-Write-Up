@@ -13,7 +13,7 @@
 再仔細看一下找到2個關鍵的code  
 Stage1From:  
 ![FireButton_Click](picture/FireButton_Click.PNG)  
-Stage2Form:
+Stage2Form:  
 ![isValidWeaponCode](picture/isValidWeaponCode.PNG)  
 
 Stage1很簡單的輸入`RAINBOW`就過關  
