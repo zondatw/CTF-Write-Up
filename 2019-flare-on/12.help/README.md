@@ -716,7 +716,6 @@ with open(new_file_name, "wb") as f:
 然後因為kdb是kdb 1的格式，就下載個KeePass-1.37，接著嘗試上面猜測的密碼，  
 最後發現密碼是`Th!s_iS_th3_3Nd!!!`  
 
-![entry_password](picture/entry_password.PNG)  
 ![flag](picture/flag.PNG)  
 
 這題很感謝twitter上網友的幫助以及一些運氣才解開的  
