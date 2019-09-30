@@ -4,4 +4,4 @@
 在這次的競賽中真的學到了很多東西，碰了很多以前沒碰過的，比方說:NES ROM，很感謝twitter上網友的一些小提示才能全解，期待明年能不靠提示自己全解出來。  
 
 ![flare](flare.PNG)  
-![flare-on](flare-on.PNG)  
+![flare-on](flare-on.png)  
