@@ -1,0 +1,478 @@
+#Region
+	#AutoIt3Wrapper_UseUpx=y
+#EndRegion
+#pragma compile(Console, True) 
+Global Const $str_nocasesense = 0
+Global Const $str_casesense = 1
+Global Const $str_nocasesensebasic = 2
+Global Const $str_stripleading = 1
+Global Const $str_striptrailing = 2
+Global Const $str_stripspaces = 4
+Global Const $str_stripall = 8
+Global Const $str_chrsplit = 0
+Global Const $str_entiresplit = 1
+Global Const $str_nocount = 2
+Global Const $str_regexpmatch = 0
+Global Const $str_regexparraymatch = 1
+Global Const $str_regexparrayfullmatch = 2
+Global Const $str_regexparrayglobalmatch = 3
+Global Const $str_regexparrayglobalfullmatch = 4
+Global Const $str_endisstart = 0
+Global Const $str_endnotstart = 1
+Global Const $sb_ansi = 1
+Global Const $sb_utf16le = 2
+Global Const $sb_utf16be = 3
+Global Const $sb_utf8 = 4
+Global Const $se_utf16 = 0
+Global Const $se_ansi = 1
+Global Const $se_utf8 = 2
+Global Const $str_utf16 = 0
+Global Const $str_ucs2 = 1
+
+Func _hextostring($shex)
+	If NOT (StringLeft($shex, 2) == "0x") Then $shex = "0x" & $shex
+	Return BinaryToString($shex, $sb_utf8)
+EndFunc
+
+Func _stringbetween($sstring, $sstart, $send, $imode = $str_endisstart, $bcase = False)
+	$sstart = $sstart ? "\Q" & $sstart & "\E" : "\A"
+	If $imode <> $str_endnotstart Then $imode = $str_endisstart
+	If $imode = $str_endisstart Then
+		$send = $send ? "(?=\Q" & $send & "\E)" : "\z"
+	Else
+		$send = $send ? "\Q" & $send & "\E" : "\z"
+	EndIf
+	If $bcase = Default Then
+		$bcase = False
+	EndIf
+	Local $areturn = StringRegExp($sstring, "(?s" & (NOT $bcase ? "i" : "") & ")" & $sstart & "(.*?)" & $send, $str_regexparrayglobalmatch)
+	If @error Then Return SetError(1, 0, 0)
+	Return $areturn
+EndFunc
+
+Func _stringexplode($sstring, $sdelimiter, $ilimit = 0)
+	If $ilimit = Default Then $ilimit = 0
+	If $ilimit > 0 Then
+		Local Const $null = Chr(0)
+		$sstring = StringReplace($sstring, $sdelimiter, $null, $ilimit)
+		$sdelimiter = $null
+	ElseIf $ilimit < 0 Then
+		Local $iindex = StringInStr($sstring, $sdelimiter, $str_nocasesensebasic, $ilimit)
+		If $iindex Then
+			$sstring = StringLeft($sstring, $iindex - 1)
+		EndIf
+	EndIf
+	Return StringSplit($sstring, $sdelimiter, BitOR($str_entiresplit, $str_nocount))
+EndFunc
+
+Func _stringinsert($sstring, $sinsertion, $iposition)
+	Local $ilength = StringLen($sstring)
+	$iposition = Int($iposition)
+	If $iposition < 0 Then $iposition = $ilength + $iposition
+	If $ilength < $iposition OR $iposition < 0 Then Return SetError(1, 0, $sstring)
+	Return StringLeft($sstring, $iposition) & $sinsertion & StringRight($sstring, $ilength - $iposition)
+EndFunc
+
+Func _stringproper($sstring)
+	Local $bcapnext = True, $schr = "", $sreturn = ""
+	For $i = 1 To StringLen($sstring)
+		$schr = StringMid($sstring, $i, 1)
+		Select 
+			Case $bcapnext = True
+				If StringRegExp($schr, "[a-zA-ZÀ-ÿšœžŸ]") Then
+					$schr = StringUpper($schr)
+					$bcapnext = False
+				EndIf
+			Case NOT StringRegExp($schr, "[a-zA-ZÀ-ÿšœžŸ]")
+				$bcapnext = True
+			Case Else
+				$schr = StringLower($schr)
+		EndSelect
+		$sreturn &= $schr
+	Next
+	Return $sreturn
+EndFunc
+
+Func _stringrepeat($sstring, $irepeatcount)
+	$irepeatcount = Int($irepeatcount)
+	If $irepeatcount = 0 Then Return ""
+	If StringLen($sstring) < 1 OR $irepeatcount < 0 Then Return SetError(1, 0, "")
+	Local $sresult = ""
+	While $irepeatcount > 1
+		If BitAND($irepeatcount, 1) Then $sresult &= $sstring
+		$sstring &= $sstring
+		$irepeatcount = BitShift($irepeatcount, 1)
+	WEnd
+	Return $sstring & $sresult
+EndFunc
+
+Func _stringtitlecase($sstring)
+	Local $bcapnext = True, $schr = "", $sreturn = ""
+	For $i = 1 To StringLen($sstring)
+		$schr = StringMid($sstring, $i, 1)
+		Select 
+			Case $bcapnext = True
+				If StringRegExp($schr, "[a-zA-Z\xC0-\xFF0-9]") Then
+					$schr = StringUpper($schr)
+					$bcapnext = False
+				EndIf
+			Case NOT StringRegExp($schr, "[a-zA-Z\xC0-\xFF'0-9]")
+				$bcapnext = True
+			Case Else
+				$schr = StringLower($schr)
+		EndSelect
+		$sreturn &= $schr
+	Next
+	Return $sreturn
+EndFunc
+
+Func _stringtohex($sstring)
+	Return Hex(StringToBinary($sstring, $sb_utf8))
+EndFunc
+
+Func maybe_get_IMAGE_Struct($arg1, $arg2, $flsgxlqjno)
+	Local $buf[2]
+	$buf[0] = DllStructCreate("struct;uint bfSize;uint bfReserved;uint bfOffBits;uint biSize;int biWidth;int biHeight;ushort biPlanes;ushort biBitCount;uint biCompression;uint biSizeImage;int biXPelsPerMeter;int biYPelsPerMeter;uint biClrUsed;uint biClrImportant;endstruct;")
+	DllStructSetData($buf[0], "bfSize", 3 * $arg1 + Mod($arg1, 4 * Abs($arg2)))
+	DllStructSetData($buf[0], "bfReserved", 0)
+	DllStructSetData($buf[0], "bfOffBits", 54)
+	DllStructSetData($buf[0], "biSize", 40)
+	DllStructSetData($buf[0], "biWidth", $arg1)
+	DllStructSetData($buf[0], "biHeight", $arg2)
+	DllStructSetData($buf[0], "biPlanes", 1)
+	DllStructSetData($buf[0], "biBitCount", 24)
+	DllStructSetData($buf[0], "biCompression", 0)
+	DllStructSetData($buf[0], "biSizeImage", 0)
+	DllStructSetData($buf[0], "biXPelsPerMeter", 0)
+	DllStructSetData($buf[0], "biYPelsPerMeter", 0)
+	DllStructSetData($buf[0], "biClrUsed", 0)
+	DllStructSetData($buf[0], "biClrImportant", 0)
+    $buf[1] = DllStructCreate("struct;" & _stringrepeat("byte[" & DllStructGetData($buf[0], "biWidth") * 3 & "];", DllStructGetData($buf[0], "biHeight")) & "endstruct")
+	Return $buf
+EndFunc
+
+Func getRandStr($arg1, $arg2)
+	Local $retStr = ""
+	For $flezmzowno = 0 To Random($arg1, $arg2, 1)
+		$retStr &= Chr(Random(97, 122, 1))
+	Next
+	Return $retStr
+EndFunc
+
+Func getBmpOrDll($arg1)
+	Local $randStr = getRandStr(15, 20)
+	Switch $arg1
+		Case 10 To 15
+			$randStr &= ".bmp"
+			FileInstall(".\sprite.bmp", @ScriptDir & "\" & $randStr)
+		Case 25 To 30
+			$randStr &= ".dll"
+			FileInstall(".\qr_encoder.dll", @ScriptDir & "\" & $randStr)
+	EndSwitch
+	Return $randStr
+EndFunc
+
+Func callGetComputerNameA()
+	Local $flfnvbvvfi = -1
+	Local $flfnvbvvfiraw = DllStructCreate("struct;dword;char[1024];endstruct")
+	DllStructSetData($flfnvbvvfiraw, 1, 1024)
+	Local $flmyeulrox = DllCall("kernel32.dll", "int", "GetComputerNameA", "ptr", DllStructGetPtr($flfnvbvvfiraw, 2), "ptr", DllStructGetPtr($flfnvbvvfiraw, 1))
+	If $flmyeulrox[0] <> 0 Then
+		$flfnvbvvfi = BinaryMid(DllStructGetData($flfnvbvvfiraw, 2), 1, DllStructGetData($flfnvbvvfiraw, 1))
+	EndIf
+	Return $flfnvbvvfi
+EndFunc
+
+GUICreate("CodeIt Plus!", 300, 375, -1, -1)
+
+Func aregtfdcyni(ByRef $arg1)
+	Local $bmpFileName = getBmpOrDll(14)
+	Local $bmpFilePtr = callCreateFile1($bmpFileName)
+	If $bmpFilePtr <> -1 Then
+		Local $fileSize = callGetFileSize($bmpFilePtr)
+		If $fileSize <> -1 AND DllStructGetSize($arg1) < $fileSize - 54 Then
+			Local $bmpFileContent = DllStructCreate("struct;byte[" & $fileSize & "];endstruct")
+			Local $flskuanqbg = callReadFile($bmpFilePtr, $bmpFileContent)
+			If $flskuanqbg <> -1 Then
+				Local $file_content_struct = DllStructCreate("struct;byte[54];byte[" & $fileSize - 54 & "];endstruct", DllStructGetPtr($bmpFileContent))
+				Local $file_idx = 1
+				Local $result = ""
+				For $idx = 1 To DllStructGetSize($arg1)
+					Local $arg1_char = Number(DllStructGetData($arg1, 1, $idx))
+					ConsoleWrite("====================arg1_char:" & $arg1_char & @LF)
+					For $y = 6 To 0 Step -1
+						$arg1_char += BitShift(BitAND(Number(DllStructGetData($file_content_struct, 2, $file_idx)), 1), -1 * $y)
+						$file_idx += 1
+					Next
+					$result &= Chr(BitShift($arg1_char, 1) + BitShift(BitAND($arg1_char, 1), -7))
+				Next
+				DllStructSetData($arg1, 1, $result)
+			EndIf
+		EndIf
+		callCloseHandle($bmpFilePtr)
+	EndIf
+	;callDeleteFileA($bmpFileName)
+EndFunc
+
+Func areyzotafnf(ByRef $argStruct)
+	Local $flisilayln = callGetComputerNameA()
+	If $flisilayln <> -1 Then
+		$flisilayln = Binary(StringLower(BinaryToString($flisilayln)))
+		Local $flisilaylnraw = DllStructCreate("struct;byte[" & BinaryLen($flisilayln) & "];endstruct")
+		DllStructSetData($flisilaylnraw, 1, $flisilayln)
+		aregtfdcyni($flisilaylnraw)
+		Local $hCryptProv = DllStructCreate("struct;ptr;ptr;dword;byte[32];endstruct")
+		DllStructSetData($hCryptProv, 3, 32)
+		Local $fluzytjacb = DllCall("advapi32.dll", "int", "CryptAcquireContextA", "ptr", DllStructGetPtr($hCryptProv, 1), "ptr", 0, "ptr", 0, "dword", 24, "dword", 4026531840) ; PROV_RSA_AES  CRYPT_VERIFYCONTEXT 
+		If $fluzytjacb[0] <> 0 Then
+			$fluzytjacb = DllCall("advapi32.dll", "int", "CryptCreateHash", "ptr", DllStructGetData($hCryptProv, 1), "dword", 32780, "dword", 0, "dword", 0, "ptr", DllStructGetPtr($hCryptProv, 2)); CALG_SHA_256
+			If $fluzytjacb[0] <> 0 Then
+				$fluzytjacb = DllCall("advapi32.dll", "int", "CryptHashData", "ptr", DllStructGetData($hCryptProv, 2), "struct*", $flisilaylnraw, "dword", DllStructGetSize($flisilaylnraw), "dword", 0)
+				If $fluzytjacb[0] <> 0 Then
+                    ConsoleWrite("Hash:" & DllStructGetData($hCryptProv, 2))
+					$fluzytjacb = DllCall("advapi32.dll", "int", "CryptGetHashParam", "ptr", DllStructGetData($hCryptProv, 2), "dword", 2, "ptr", DllStructGetPtr($hCryptProv, 4), "ptr", DllStructGetPtr($hCryptProv, 3), "dword", 0)
+					If $fluzytjacb[0] <> 0 Then
+                        ConsoleWrite("Hash:" & DllStructGetData($hCryptProv, 4))
+						Local $binary1 = Binary("0x" & "08020" & "00010" & "66000" & "02000" & "0000") & DllStructGetData($hCryptProv, 4)
+						Local $binary2 = Binary("0x" & "CD4B3" & "2C650" & "CF21B" & "DA184" & "D8913" & "E6F92" & "0A37A" & "4F396" & "3736C" & "042C4" & "59EA0" & "7B79E" & "A443F" & "FD189" & "8BAE4" & "9B115" & "F6CB1" & "E2A7C" & "1AB3C" & "4C256" & "12A51" & "9035F" & "18FB3" & "B1752" & "8B3AE" & "CAF3D" & "480E9" & "8BF8A" & "635DA" & "F974E" & "00135" & "35D23" & "1E4B7" & "5B2C3" & "8B804" & "C7AE4" & "D266A" & "37B36" & "F2C55" & "5BF3A" & "9EA6A" & "58BC8" & "F906C" & "C665E" & "AE2CE" & "60F2C" & "DE38F" & "D3026" & "9CC4C" & "E5BB0" & "90472" & "FF9BD" & "26F91" & "19B8C" & "484FE" & "69EB9" & "34F43" & "FEEDE" & "DCEBA" & "79146" & "0819F" & "B21F1" & "0F832" & "B2A5D" & "4D772" & "DB12C" & "3BED9" & "47F6F" & "706AE" & "4411A" & "52")
+						Local $hCryptProv2 = DllStructCreate("struct;ptr;ptr;dword;byte[8192];byte[" & BinaryLen($binary1) & "];dword;endstruct")
+						DllStructSetData($hCryptProv2, 3, BinaryLen($binary2))
+						DllStructSetData($hCryptProv2, 4, $binary2)
+						DllStructSetData($hCryptProv2, 5, $binary1)
+                        DllStructSetData($hCryptProv2, 6, BinaryLen($binary1))
+                        ConsoleWrite(BinaryLen($binary2))
+                        ConsoleWrite($binary2)
+                        ConsoleWrite(BinaryLen($binary1))
+                        ConsoleWrite($binary1)
+						Local $fluzytjacb = DllCall("advapi32.dll", "int", "CryptAcquireContextA", "ptr", DllStructGetPtr($hCryptProv2, 1), "ptr", 0, "ptr", 0, "dword", 24, "dword", 4026531840)
+                        If $fluzytjacb[0] <> 0 Then
+							$fluzytjacb = DllCall("advapi32.dll", "int", "CryptImportKey", "ptr", DllStructGetData($hCryptProv2, 1), "ptr", DllStructGetPtr($hCryptProv2, 5), "dword", DllStructGetData($hCryptProv2, 6), "dword", 0, "dword", 0, "ptr", DllStructGetPtr($hCryptProv2, 2))
+                            If $fluzytjacb[0] <> 0 Then
+								$fluzytjacb = DllCall("advapi32.dll", "int", "CryptDecrypt", "ptr", DllStructGetData($hCryptProv2, 2), "dword", 0, "dword", 1, "dword", 0, "ptr", DllStructGetPtr($hCryptProv2, 4), "ptr", DllStructGetPtr($hCryptProv2, 3))
+                                ConsoleWrite("fluzytjacb:" & $fluzytjacb[0])
+                                If $fluzytjacb[0] <> 0 Then
+									Local $key_str = BinaryMid(DllStructGetData($hCryptProv2, 4), 1, DllStructGetData($hCryptProv2, 3))
+                                    ConsoleWrite("key_str:" & $key_str)
+									$flfzfsuaoz = Binary("FLARE")
+									$fltvwqdotg = Binary("ERALF")
+									$flgggftges = BinaryMid($key_str, 1, BinaryLen($flfzfsuaoz))
+									$flnmiatrft = BinaryMid($key_str, BinaryLen($key_str) - BinaryLen($fltvwqdotg) + 1, BinaryLen($fltvwqdotg))
+									If $flfzfsuaoz = $flgggftges AND $fltvwqdotg = $flnmiatrft Then
+										DllStructSetData($argStruct, 1, BinaryMid($key_str, 6, 4))
+										DllStructSetData($argStruct, 2, BinaryMid($key_str, 10, 4))
+										DllStructSetData($argStruct, 3, BinaryMid($key_str, 14, BinaryLen($flsekbkmru) - 18))
+									EndIf
+								EndIf
+								DllCall("advapi32.dll", "int", "CryptDestroyKey", "ptr", DllStructGetData($hCryptProv2, 2))
+							EndIf
+							DllCall("advapi32.dll", "int", "CryptReleaseContext", "ptr", DllStructGetData($hCryptProv2, 1), "dword", 0)
+						EndIf
+					EndIf
+				EndIf
+				DllCall("advapi32.dll", "int", "CryptDestroyHash", "ptr", DllStructGetData($hCryptProv, 2))
+			EndIf
+			DllCall("advapi32.dll", "int", "CryptReleaseContext", "ptr", DllStructGetData($hCryptProv, 1), "dword", 0)
+		EndIf
+	EndIf
+EndFunc
+
+# unused
+Func areaqwbmtiz(ByRef $flkhfbuyon)
+	Local $fluupfrkdz = -1
+	Local $flqbsfzezk = DllStructCreate("struct;ptr;ptr;dword;byte[16];endstruct")
+	DllStructSetData($flqbsfzezk, 3, 16)
+	Local $fltrtsuryd = DllCall("advapi32.dll", "int", "CryptAcquireContextA", "ptr", DllStructGetPtr($flqbsfzezk, 1), "ptr", 0, "ptr", 0, "dword", 24, "dword", 4026531840)
+	If $fltrtsuryd[0] <> 0 Then
+		$fltrtsuryd = DllCall("advapi32.dll", "int", "CryptCreateHash", "ptr", DllStructGetData($flqbsfzezk, 1), "dword", 32771, "dword", 0, "dword", 0, "ptr", DllStructGetPtr($flqbsfzezk, 2))
+		If $fltrtsuryd[0] <> 0 Then
+			$fltrtsuryd = DllCall("advapi32.dll", "int", "CryptHashData", "ptr", DllStructGetData($flqbsfzezk, 2), "struct*", $flkhfbuyon, "dword", DllStructGetSize($flkhfbuyon), "dword", 0)
+			If $fltrtsuryd[0] <> 0 Then
+				$fltrtsuryd = DllCall("advapi32.dll", "int", "CryptGetHashParam", "ptr", DllStructGetData($flqbsfzezk, 2), "dword", 2, "ptr", DllStructGetPtr($flqbsfzezk, 4), "ptr", DllStructGetPtr($flqbsfzezk, 3), "dword", 0)
+				If $fltrtsuryd[0] <> 0 Then
+					$fluupfrkdz = DllStructGetData($flqbsfzezk, 4)
+				EndIf
+			EndIf
+			DllCall("advapi32.dll", "int", "CryptDestroyHash", "ptr", DllStructGetData($flqbsfzezk, 2))
+		EndIf
+		DllCall("advapi32.dll", "int", "CryptReleaseContext", "ptr", DllStructGetData($flqbsfzezk, 1), "dword", 0)
+	EndIf
+	Return $fluupfrkdz
+EndFunc
+
+# unused
+Func arepfnkwypw()
+	Local $flgqbtjbmi = -1
+	Local $fltpvjccvq = DllStructCreate("struct;dword;dword;dword;dword;dword;byte[128];endstruct")
+	DllStructSetData($fltpvjccvq, 1, DllStructGetSize($fltpvjccvq))
+	Local $flaghdvgyv = DllCall("kernel32.dll", "int", "GetVersionExA", "struct*", $fltpvjccvq)
+	If $flaghdvgyv[0] <> 0 Then
+		If DllStructGetData($fltpvjccvq, 2) = 6 Then
+			If DllStructGetData($fltpvjccvq, 3) = 1 Then
+				$flgqbtjbmi = 0
+			EndIf
+		EndIf
+	EndIf
+	Return $flgqbtjbmi
+EndFunc
+
+Func GUIMain()
+	Local $input_obj = GUICtrlCreateInput("Enter text to encode", -1, 5, 300)
+	Local $btn_obj = GUICtrlCreateButton("Can haz code?", -1, 30, 300)
+	Local $pic_obj = GUICtrlCreatePic("", -1, 55, 300, 300)
+	Local $menu_obj = GUICtrlCreateMenu("Help")
+	Local $menu_obj_item = GUICtrlCreateMenuItem("About CodeIt Plus!", $menu_obj)
+	Local $bmpFileName = getBmpOrDll(13)
+	GUICtrlSetImage($pic_obj, $bmpFileName)
+	callDeleteFileA($bmpFileName)
+	GUISetState(@SW_SHOW)
+	While 1
+		Switch GUIGetMsg()
+			Case $btn_obj
+				Local $inputStr = GUICtrlRead($input_obj)
+				If $inputStr Then
+					Local $dllFileName = getBmpOrDll(26)
+					Local $dllStruct = DllStructCreate("struct;dword;dword;byte[3918];endstruct")
+					Local $result = DllCall($dllFileName, "int:cdecl", "justGenerateQRSymbol", "struct*", $dllStruct, "str", $inputStr)
+					If $result[0] <> 0 Then
+						areyzotafnf($dllStruct)
+						Local $flbvokdxkg = maybe_get_IMAGE_Struct((DllStructGetData($dllStruct, 1) * DllStructGetData($dllStruct, 2)), (DllStructGetData($dllStruct, 1) * DllStructGetData($dllStruct, 2)), 1024)
+						$result = DllCall($dllFileName, "int:cdecl", "justConvertQRSymbolToBitmapPixels", "struct*", $dllStruct, "struct*", $flbvokdxkg[1])
+						If $result[0] <> 0 Then
+							; $bmpFileName = getRandStr(25, 30) & ".bmp"
+							$bmpFileName = "QRCode" & ".bmp"
+							createQRCodeBmp($flbvokdxkg, $bmpFileName)
+						EndIf
+					EndIf
+					; callDeleteFileA($dllFileName)
+				Else
+					$bmpFileName = getBmpOrDll(11)
+				EndIf
+				GUICtrlSetImage($pic_obj, $bmpFileName)
+				; callDeleteFileA($bmpFileName)
+			Case $menu_obj_item
+				Local $flomtrkawp = "This program generates QR codes using QR Code Generator (https://www.nayuki.io/page/qr-code-generator-library) developed by Nayuki. "
+				$flomtrkawp &= "QR Code Generator is available on GitHub (https://github.com/nayuki/QR-Code-generator) and open-sourced under the following permissive MIT License (https://github.com/nayuki/QR-Code-generator#license):"
+				$flomtrkawp &= @CRLF
+				$flomtrkawp &= @CRLF
+				$flomtrkawp &= "Copyright Â© 2020 Project Nayuki. (MIT License)"
+				$flomtrkawp &= @CRLF
+				$flomtrkawp &= "https://www.nayuki.io/page/qr-code-generator-library"
+				$flomtrkawp &= @CRLF
+				$flomtrkawp &= @CRLF
+				$flomtrkawp &= "Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the Software), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:"
+				$flomtrkawp &= @CRLF
+				$flomtrkawp &= @CRLF
+				$flomtrkawp &= "1. The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software."
+				$flomtrkawp &= @CRLF
+				$flomtrkawp &= "2. The Software is provided as is, without warranty of any kind, express or implied, including but not limited to the warranties of merchantability, fitness for a particular purpose and noninfringement. In no event shall the authors or copyright holders be liable for any claim, damages or other liability, whether in an action of contract, tort or otherwise, arising from, out of or in connection with the Software or the use or other dealings in the Software."
+				MsgBox(4096, "About CodeIt Plus!", $flomtrkawp)
+			Case -3
+				ExitLoop
+		EndSwitch
+	WEnd
+EndFunc
+
+Func createBmpHeader($flmwacufre, $fljxaivjld)
+	Local $fljiyeluhx = -1
+	Local $flmwacufreheadermagic = DllStructCreate("struct;ushort;endstruct")
+	DllStructSetData($flmwacufreheadermagic, 1, 19778)
+	Local $flivpiogmf = callCreateFile2($fljxaivjld, False)
+	If $flivpiogmf <> -1 Then
+		Local $flchlkbend = callWriteFile($flivpiogmf, DllStructGetPtr($flmwacufreheadermagic), DllStructGetSize($flmwacufreheadermagic))
+		If $flchlkbend <> -1 Then
+			$flchlkbend = callWriteFile($flivpiogmf, DllStructGetPtr($flmwacufre[0]), DllStructGetSize($flmwacufre[0]))
+			If $flchlkbend <> -1 Then
+				$fljiyeluhx = 0
+			EndIf
+		EndIf
+		callCloseHandle($flivpiogmf)
+	EndIf
+	Return $fljiyeluhx
+EndFunc
+
+GUIMain()
+
+Func createQRCodeBmp($arg1, $fileName)
+	Local $flefoubdxt = -1
+	Local $flamtlcncx = createBmpHeader($arg1, $fileName)
+	If $flamtlcncx <> -1 Then
+		Local $flvikmhxwu = callCreateFile2($fileName, True)
+		If $flvikmhxwu <> -1 Then
+			Local $flwldjlwrq = Abs(DllStructGetData($arg1[0], "biHeight"))
+			Local $flumnoetuu = DllStructGetData($arg1[0], "biHeight") > 0 ? $flwldjlwrq - 1 : 0
+			Local $dllStruct = DllStructCreate("struct;byte;byte;byte;endstruct")
+			For $fllrcvawmx = 0 To $flwldjlwrq - 1
+				$flamtlcncx = callWriteFile($flvikmhxwu, DllStructGetPtr($arg1[1], Abs($flumnoetuu - $fllrcvawmx) + 1), DllStructGetData($arg1[0], "biWidth") * 3)
+				If $flamtlcncx = -1 Then ExitLoop
+				$flamtlcncx = callWriteFile($flvikmhxwu, DllStructGetPtr($dllStruct), Mod(DllStructGetData($arg1[0], "biWidth"), 4))
+				If $flamtlcncx = -1 Then ExitLoop
+			Next
+			If $flamtlcncx <> -1 Then
+				$flefoubdxt = 0
+			EndIf
+			callCloseHandle($flvikmhxwu)
+		EndIf
+	EndIf
+	Return $flefoubdxt
+EndFunc
+
+Func callCreateFile1($flrriteuxd)
+	Local $flrichemye = DllCall("kernel32.dll", "ptr", "CreateFile", "str", @ScriptDir & "\" & $flrriteuxd, "uint", 2147483648, "uint", 0, "ptr", 0, "uint", 3, "uint", 128, "ptr", 0)
+	Return $flrichemye[0]
+EndFunc
+
+Func callCreateFile2($flzxepiook, $flzcodzoep = True)
+	Local $flogmfcakq = DllCall("kernel32.dll", "ptr", "CreateFile", "str", @ScriptDir & "\" & $flzxepiook, "uint", 1073741824, "uint", 0, "ptr", 0, "uint", $flzcodzoep ? 3 : 2, "uint", 128, "ptr", 0)
+	Return $flogmfcakq[0]
+EndFunc
+
+GUIDelete()
+
+Func callWriteFile($fllsczdyhr, $flbfzgxbcy, $flutgabjfj)
+	If $fllsczdyhr <> -1 Then
+		Local $flvfnkosuf = DllCall("kernel32.dll", "uint", "SetFilePointer", "ptr", $fllsczdyhr, "long", 0, "ptr", 0, "uint", 2)
+		If $flvfnkosuf[0] <> -1 Then
+			Local $flwzfbbkto = DllStructCreate("uint")
+			$flvfnkosuf = DllCall("kernel32.dll", "ptr", "WriteFile", "ptr", $fllsczdyhr, "ptr", $flbfzgxbcy, "uint", $flutgabjfj, "ptr", DllStructGetPtr($flwzfbbkto), "ptr", 0)
+			If $flvfnkosuf[0] <> 0 AND DllStructGetData($flwzfbbkto, 1) = $flutgabjfj Then
+				Return 0
+			EndIf
+		EndIf
+	EndIf
+	Return -1
+EndFunc
+
+Func callReadFile($flfdnkxwze, ByRef $flgfdykdor)
+	Local $flqcvtzthz = DllStructCreate("struct;dword;endstruct")
+	Local $flqnsbzfsf = DllCall("kernel32.dll", "int", "ReadFile", "ptr", $flfdnkxwze, "struct*", $flgfdykdor, "dword", DllStructGetSize($flgfdykdor), "struct*", $flqcvtzthz, "ptr", 0)
+	Return $flqnsbzfsf[0]
+EndFunc
+
+Func callCloseHandle($fldiapcptm)
+	Local $flhvhgvtxm = DllCall("kernel32.dll", "int", "CloseHandle", "ptr", $fldiapcptm)
+	Return $flhvhgvtxm[0]
+EndFunc
+
+Func callDeleteFileA($arg1)
+	Local $flaubrmoip = DllCall("kernel32.dll", "int", "DeleteFileA", "str", $arg1)
+	Return $flaubrmoip[0]
+EndFunc
+
+Func callGetFileSize($flpxhqhcav)
+	Local $flzmcdhzwh = -1
+	Local $flztpegdeg = DllStructCreate("struct;dword;endstruct")
+	Local $flekmcmpdl = DllCall("kernel32.dll", "dword", "GetFileSize", "ptr", $flpxhqhcav, "struct*", $flztpegdeg)
+	If $flekmcmpdl <> -1 Then
+		$flzmcdhzwh = $flekmcmpdl[0] + Number(DllStructGetData($flztpegdeg, 1))
+	EndIf
+	Return $flzmcdhzwh
+EndFunc
+
+
+Func DecToString($flqlnxgxbp)
+	Local $flqlnxgxbp_
+	For $flrctqryub = 1 To StringLen($flqlnxgxbp) Step 2
+		$flqlnxgxbp_ &= Chr(Dec(StringMid($flqlnxgxbp, $flrctqryub, 2)))
+	Next
+	Return $flqlnxgxbp_
+EndFunc
