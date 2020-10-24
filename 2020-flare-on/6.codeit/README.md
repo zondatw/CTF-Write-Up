@@ -22,7 +22,7 @@ GUI相關: COMCTL32、GDI32
 有anti debugger  
 ![anti_debugger](picture/anti_debugger.PNG)  
 
-看到一個function，要達成某條件會去打開他
+看到一個function，要達成某條件會去打開他  
 ![maybe_key_func](picture/maybe_key_func.PNG)  
 
 後來發現自己太傻了，原來有exe2aut這個專門用來decompile autoit v3的工具，  

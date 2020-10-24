@@ -32,7 +32,7 @@ for p in password:
 ![SetupList](picture/SetupList.PNG)  
 觀察一下，沒意外Note就是`keep steaks for dinner`
 
-接著在GalleryPage中看到IndexPage_CurrentPageChanged
+接著在GalleryPage中看到IndexPage_CurrentPageChanged  
 ![GalleryPage_list](picture/GalleryPage_list.PNG)  
 ![IndexPage_CurrentPageChanged](picture/IndexPage_CurrentPageChanged.PNG)  
 他是要從res/gallery/05.jpg中取得EXIF的ImageDescription訊息  
@@ -53,7 +53,7 @@ for p in password:
 
 可以先用另一個function來確認一下  
 ![check_values_function](picture/check_values_function.PNG)  
-確認後確定沒問題，來正式解密囉
+確認後確定沒問題，來正式解密囉  
 
 直接寫C#比較快，記得先將Runtime.dll從dnSpy上dump出來後，並加入到專案的resource中  
 ![runtime_dll](picture/runtime_dll.PNG)  

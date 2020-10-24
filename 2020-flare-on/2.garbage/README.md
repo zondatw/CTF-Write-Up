@@ -5,11 +5,11 @@
 
 ## Solution
 
-直接把他丟進ida時發現他好像有用UPX，觀察binary後真的有UPX的字樣，所以得先脫殼
+直接把他丟進ida時發現他好像有用UPX，觀察binary後真的有UPX的字樣，所以得先脫殼  
 ![ida_upx](picture/ida_upx.PNG)  
 ![binary_upx](picture/binary_upx.PNG)  
 
-要脫殼時發現他是壞掉的
+要脫殼時發現他是壞掉的  
 ![unpack_fail](picture/unpack_fail.PNG)  
 接著看到他的Data Directories有invalid的字樣  
 ![invalid_data_directories](picture/invalid_data_directories.PNG)  
