@@ -1,0 +1,10 @@
+{
+    "projects": [{
+        "name": "CTF",
+        "path": "./sources/CTF.tact",
+        "output": "./sources/output",
+        "options":{
+            "debug": true
+        }
+    }]
+}
