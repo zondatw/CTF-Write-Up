@@ -1,0 +1,187 @@
+PROGRAM{
+  DECLPROC __tact_verify_address
+  DECLPROC $Checkin$_store
+  DECLPROC $Checkin$_load
+  DECLPROC $Checkin$init$_load
+  DECLPROC $Checkin$_contract_init
+  DECLPROC $Checkin$_contract_load
+  DECLPROC $Checkin$_contract_store
+  DECLPROC $Checkin$_fun_get_counter
+  DECLPROC $Checkin$_fun_is_solved
+  DECLPROC $Checkin$_internal_text_2a3ba71f2e130777c61c5394b865df005ee19f22e4b175e2807176e2df2d5332
+  DECLPROC $Checkin$_internal_text_4d73c4b7b09d6e1e50e4a7d9dcf06c84d3a6a1e4c581ab2e662f19ab4d235e67
+  127487 DECLMETHOD %get_counter
+  94482 DECLMETHOD %is_solved
+  115390 DECLMETHOD lazy_deployment_completed
+  DECLPROC $Checkin$_contract_router_internal
+  DECLPROC recv_internal
+  DECLGLOBVAR __tact_context
+  DECLGLOBVAR __tact_context_sender
+  DECLGLOBVAR __tact_context_sys
+  DECLGLOBVAR __tact_randomized
+  __tact_verify_address PROCINLINE:<{
+    DUP
+    SBITS
+    267 PUSHINT
+    EQUAL
+    136 THROWIFNOT
+    DUP
+    11 PLDU
+    DUP
+    1279 PUSHINT
+    EQUAL
+    137 THROWIF
+    10 PUSHPOW2
+    EQUAL
+    136 THROWIFNOT
+  }>
+  $Checkin$_store PROCINLINE:<{
+    SWAP
+    257 PUSHINT
+    STIX
+  }>
+  $Checkin$_load PROCINLINE:<{
+    257 PUSHINT
+    LDIX
+    SWAP
+  }>
+  $Checkin$init$_load PROCINLINE:<{
+    257 PUSHINT
+    LDIX
+    SWAP
+  }>
+  $Checkin$_contract_init PROCREF:<{
+    DROP
+    0 PUSHINT
+  }>
+  $Checkin$_contract_load PROCREF:<{
+    c4 PUSH
+    CTOS
+    LDREF
+    SWAP
+    __tact_context_sys SETGLOB
+    1 LDI
+    SWAP
+    IFJMP:<{
+      $Checkin$_load INLINECALLDICT
+      NIP
+    }>
+    MYADDR
+    11 PLDU
+    10 PUSHPOW2
+    EQUAL
+    137 THROWIFNOT
+    $Checkin$init$_load INLINECALLDICT
+    SWAP
+    ENDS
+    $Checkin$_contract_init INLINECALLDICT
+  }>
+  $Checkin$_contract_store PROCINLINE:<{
+    NEWC
+    __tact_context_sys GETGLOB
+    SWAP
+    STREF
+    TRUE
+    SWAP
+    1 STI
+    SWAP
+    $Checkin$_store INLINECALLDICT
+    ENDC
+    c4 POP
+  }>
+  $Checkin$_fun_get_counter PROCREF:<{
+    DUP
+  }>
+  $Checkin$_fun_is_solved PROCREF:<{
+    DUP
+    100 EQINT
+  }>
+  $Checkin$_internal_text_2a3ba71f2e130777c61c5394b865df005ee19f22e4b175e2807176e2df2d5332 PROCINLINE:<{
+    INC
+  }>
+  $Checkin$_internal_text_4d73c4b7b09d6e1e50e4a7d9dcf06c84d3a6a1e4c581ab2e662f19ab4d235e67 PROCINLINE:<{
+    DROP
+    100 PUSHINT
+  }>
+  %get_counter PROC:<{
+    $Checkin$_contract_load INLINECALLDICT
+    $Checkin$_fun_get_counter INLINECALLDICT
+    NIP
+  }>
+  %is_solved PROC:<{
+    $Checkin$_contract_load INLINECALLDICT
+    $Checkin$_fun_is_solved INLINECALLDICT
+    NIP
+  }>
+  lazy_deployment_completed PROC:<{
+    c4 PUSH
+    CTOS
+    1 LDI
+    SWAP
+  }>
+  $Checkin$_contract_router_internal PROCREF:<{
+    c2 SAVE
+    SAMEALTSAVE
+    SWAP
+    IFJMP:<{
+      DROP
+      TRUE
+    }>
+    0 PUSHINT
+    OVER
+    SBITS
+    31 GTINT
+    IF:<{
+      DROP
+      DUP
+      32 PLDU
+    }>
+    0 EQINT
+    IF:<{
+      HASHSU
+      DUP
+      19102537049569567256747346172190974746772341827836692828684757093298492756786 PUSHINT
+      EQUAL
+      IFJMP:<{
+        DROP
+        $Checkin$_internal_text_2a3ba71f2e130777c61c5394b865df005ee19f22e4b175e2807176e2df2d5332 INLINECALLDICT
+        TRUE
+        RETALT
+      }>
+      35032634447914963482739797084252371306789989590432117365386977342102998048359 PUSHINT
+      EQUAL
+      IFJMP:<{
+        $Checkin$_internal_text_4d73c4b7b09d6e1e50e4a7d9dcf06c84d3a6a1e4c581ab2e662f19ab4d235e67 INLINECALLDICT
+        TRUE
+        RETALT
+      }>
+    }>ELSE<{
+      DROP
+    }>
+    FALSE
+  }>
+  recv_internal PROC:<{
+    SWAP
+    CTOS
+    4 LDU
+    SWAP
+    1 PUSHINT
+    AND
+    NEGATE
+    SWAP
+    LDMSGADDR
+    SWAP
+    __tact_verify_address INLINECALLDICT
+    s0 s4 s2 PUXCPU
+    s0 s3 XCHG
+    4 TUPLE
+    __tact_context SETGLOB
+    s0 s2 XCHG
+    __tact_context_sender SETGLOB
+    $Checkin$_contract_load INLINECALLDICT
+    -ROT
+    $Checkin$_contract_router_internal INLINECALLDICT
+    130 THROWIFNOT
+    $Checkin$_contract_store INLINECALLDICT
+  }>
+}END>c

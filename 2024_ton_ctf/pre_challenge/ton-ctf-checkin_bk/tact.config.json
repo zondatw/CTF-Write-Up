@@ -1,0 +1,10 @@
+{
+    "projects": [{
+        "name": "Checkin",
+        "path": "./sources/checkin.tact",
+        "output": "./sources/output",
+        "options":{
+            
+        }
+    }]
+}
