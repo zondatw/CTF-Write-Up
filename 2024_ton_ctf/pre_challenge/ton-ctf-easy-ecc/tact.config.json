@@ -1,0 +1,10 @@
+{
+    "projects": [{
+        "name": "ECC",
+        "path": "./sources/ecc.tact",
+        "output": "./sources/output",
+        "options":{
+            "debug": true
+        }
+    }]
+}
