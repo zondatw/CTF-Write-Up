@@ -3,4 +3,5 @@
 [https://ctf.tonbit.xyz](https://ctf.tonbit.xyz)  
 [official github](https://github.com/TonBitSec)  
 
-競賽時剛好家裡有事，所以是事後慢慢玩
+競賽時剛好家裡有事，所以是事後慢慢玩，
+解題方式會寫在 Solve.md 中
