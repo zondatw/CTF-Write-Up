@@ -1,0 +1,10 @@
+{
+    "projects": [{
+        "name": "Puzzle",
+        "path": "./sources/puzzle.tact",
+        "output": "./sources/output",
+        "options":{
+            "debug": true
+        }
+    }]
+}
